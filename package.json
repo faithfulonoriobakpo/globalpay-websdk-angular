@@ -1,12 +1,19 @@
 {
   "name": "globalpay-websdk-angular",
   "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/faithfulonoriobakpo/globalpay-websdk-angular.git"
+  },
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "build-library": "ng build globalpay-gateway",
+    "pack-lib": "cd dist/globalpay-gateway && npm pack",
+    "publish": "cd dist/globalpay-gateway && npm publish"
   },
   "private": true,
   "dependencies": {
@@ -23,6 +30,7 @@
     "zone.js": "~0.13.0"
   },
   "devDependencies": {
+    "@angular-devkit/build-angular": "^16.0.6",
     "@angular/cli": "~16.0.3",
     "@angular/compiler-cli": "^16.0.0",
     "@types/jasmine": "~4.3.0",
@@ -32,6 +40,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.0.0",
+    "ng-packagr": "^16.0.0",
     "typescript": "~5.0.2"
   }
 }

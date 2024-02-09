@@ -3,5 +3,38 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
+    "globalpay-gateway": {
+      "projectType": "library",
+      "root": "projects/globalpay-gateway",
+      "sourceRoot": "projects/globalpay-gateway/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/globalpay-gateway/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/globalpay-gateway/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/globalpay-gateway/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/globalpay-gateway/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
+    }
   }
 }

@@ -36,7 +36,7 @@ export interface GeneratePaymentLinkResponse {
 @Component({
   selector: 'globalpay',
   template: `
-    <button (click)="generatePaymentLink()" [class.fade]="generatingLink" [style]="buttonStyle">
+    <button (click)="generatePaymentLink()" [class.fade]="generatingLink" [ngStyle]="buttonStyle">
       {{buttonText}} &nbsp;
       <span *ngIf="generatingLink" class="loading-animation"></span>
     </button>
@@ -45,21 +45,25 @@ export interface GeneratePaymentLinkResponse {
     `
     button {
       background-color: #007bff;
+      display: flex;
+      align-items: center;
       color: #fff;
       border: none;
       padding: 10px 20px;
       cursor: pointer;
-      border-radius: 8px;
+      border-radius: 4px;
+      font-weight: bold;
     }
+
     button.fade {
       opacity: 0.5;
     }
     .loading-animation {
-      border: 4px solid rgba(0, 0, 0, 0.1);
-      border-left-color: #007bff;
+      border: 2px solid rgba(0, 0, 0, 0.1);
+      border-left-color: #fff;
       border-radius: 50%;
-      width: 24px;
-      height: 24px;
+      width: 12px;
+      height: 12px;
       animation: spin 1s linear infinite;
       display: inline-block;
     }
@@ -76,7 +80,9 @@ export class GlobalpayGatewayComponent {
   @Input() buttonText: string = "Pay";
   @Input() apiKey!: string;
   @Input() payload!: GeneratePaymentLinkPayload;
-  @Input() buttonStyle: string = "";
+  @Input() buttonStyle: {
+                          [klass: string]: any;
+                        } | null | undefined;
   generatingLink: boolean = false;
 
   constructor(

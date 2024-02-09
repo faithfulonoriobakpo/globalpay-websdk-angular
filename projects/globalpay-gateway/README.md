@@ -1,24 +1,111 @@
-# GlobalpayGateway
+# GlobalPay Web SDK for Angular
 
-This library was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.0.0.
+This is an Angular library for integrating GlobalPay Payment Gateway into Angular applications.
 
-## Code scaffolding
+## Installation
 
-Run `ng generate component component-name --project globalpay-gateway` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module --project globalpay-gateway`.
-> Note: Don't forget to add `--project globalpay-gateway` or else it will be added to the default project in your `angular.json` file. 
+You can install this library via npm:
 
-## Build
+```bash
+npm install globalpay-websdk-angular
 
-Run `ng build globalpay-gateway` to build the project. The build artifacts will be stored in the `dist/` directory.
+```
 
-## Publishing
+## Usage
+### Module (<= angular 16) - Import the module
 
-After building your library with `ng build globalpay-gateway`, go to the dist folder `cd dist/globalpay-gateway` and run `npm publish`.
+Import GlobalPayModule into your Angular application's module where Globalpay is used:
 
-## Running unit tests
+```ts
 
-Run `ng test globalpay-gateway` to execute the unit tests via [Karma](https://karma-runner.github.io).
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { GlobalPayModule } from 'globalpay-websdk-angular';
 
-## Further help
+@NgModule({
+  declarations: [
+    // Your components
+  ],
+  imports: [
+    BrowserModule,
+    GlobalPayModule
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+```
+
+### Standalone (>= angular 17) - Add to imports
+
+```ts
+
+import { Component } from '@angular/core';
+import { GeneratePaymentLinkPayload } from 'globalpaygateway-sdk-angular';
+
+@Component({
+  selector: 'your-component',
+  standalone: true,
+  imports: [GlobalPayModule],
+  templateUrl: './your-component.component.html',
+  styleUrls: ['./your-component.component.scss']
+})
+export class YourComponent {
+}
+```
+
+
+### Use the component
+Use the globalpay component in your template:
+
+
+```html
+<globalpay
+    [apiKey]="apiKey"
+    [payload]="payload"
+    [buttonStyle]="buttonStyle"
+    [buttonText]="buttonText"
+>
+</globalpay>
+```
+
+```ts
+
+import { GeneratePaymentLinkPayload } from 'globalpaygateway-sdk-angular';
+import { Component } from '@angular/core';
+import { GeneratePaymentLinkPayload } from 'globalpaygateway-sdk-angular';
+
+@Component({
+  selector: 'your-component',
+  templateUrl: './your-component.component.html',
+  styleUrls: ['./your-component.component.scss']
+})
+export class YourComponent {
+   payload: GeneratePaymentLinkPayload = {
+    amount: 1500,
+    secretKey: "Your secret key",
+    merchantTransactionReference: "your transaction reference",
+    redirectUrl: "your redirect url",
+    customer: {
+      lastName: "Doe",
+      firstName: "John",
+      currency: "NGN",
+      phoneNumber: "customer phone number",
+      address: "string",
+      emailAddress: "customer email"
+    }
+  };
+
+  apiKey = 'your api key';
+  buttonStyle = {
+    'background': 'red',
+    'font-size': '16px'
+    // other styles
+  };
+  buttonText = "Proceed to Pay";
+}
+
+```
+
+> buttonText and buttonStyle inputs are optional. buttonText is defaulted to Pay unless specified from input and buttonStyle is defaulted to a blue background with white text.

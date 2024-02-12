@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { GlobalpayGatewayService } from './globalpay-gateway.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { finalize } from 'rxjs';
@@ -31,6 +31,11 @@ export interface GeneratePaymentLinkResponse {
   responseCode: string,
   isSuccessful: boolean,
   error: any
+}
+
+export interface GeneratePaymentLinkError {
+  message: string,
+  details: any
 }
 
 @Component({
@@ -77,6 +82,7 @@ export interface GeneratePaymentLinkResponse {
   ]
 })
 export class GlobalpayGatewayComponent {
+  @Input() isLive: boolean = true;
   @Input() buttonText: string = "Pay";
   @Input() apiKey!: string;
   @Input() payload!: GeneratePaymentLinkPayload;
@@ -84,15 +90,28 @@ export class GlobalpayGatewayComponent {
                           [klass: string]: any;
                         } | null | undefined;
   generatingLink: boolean = false;
+  @Output() onError: EventEmitter<GeneratePaymentLinkError> = new EventEmitter<GeneratePaymentLinkError>();
 
   constructor(
     private globapayService: GlobalpayGatewayService
   ){}
 
   generatePaymentLink(){
+
+    const emptyKeys = this.findEmptyKeys(this.payload);
+
+    if(!this.apiKey){
+      return this.onError.emit({message: 'API Key is required', details:null});
+    }else if(!this.payload){
+      return this.onError.emit({message: 'Payload is required', details:null});
+    }else if(emptyKeys.length > 0){
+      const requiredFields = emptyKeys.join(', ').replace(/, (?!.*, )/, ' and ')
+      return this.onError.emit({message: `Payload is invalid. ${requiredFields} required`, details: null});
+    }
+
     this.generatingLink = true;
 
-    this.globapayService.generatePaymentLink(this.payload, this.apiKey)
+    this.globapayService.generatePaymentLink(this.payload, this.apiKey, this.isLive)
     .pipe(
       finalize(() => this.generatingLink = false)
     )
@@ -102,7 +121,32 @@ export class GlobalpayGatewayComponent {
       },
       error: (error: HttpErrorResponse) => {
         console.error(error);
+        this.onError.emit(
+          {
+            message: 'error occurred generating paymentlink',
+            details: error
+          }
+          );
       }
     });
+  }
+
+  findEmptyKeys(payload: any): string[] {
+    const emptyKeys: string[] = [];
+    
+    for (const key in payload) {
+
+      if(key == 'address') continue;
+
+      if (payload.hasOwnProperty(key)) {
+        if (payload[key] === null || payload[key] === undefined || payload[key] === '') {
+          emptyKeys.push(key);
+        } else if (typeof payload[key] === 'object') {
+          const subEmptyKeys = this.findEmptyKeys(payload[key]);
+          emptyKeys.push(...subEmptyKeys);
+        }
+      }
+    }
+    return emptyKeys;
   }
 }

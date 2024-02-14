@@ -66,6 +66,7 @@ Use the globalpay component in your template:
     [payload]="payload"
     [buttonStyle]="buttonStyle"
     [buttonText]="buttonText"
+    (onError)="onError($event)"
 >
 </globalpay>
 ```
@@ -104,6 +105,10 @@ export class YourComponent {
     // other styles
   };
   buttonText = "Proceed to Pay";
+
+  onError(error: GeneratePaymentLinkError){
+    console.log(error)
+  }
 }
 
 ```
